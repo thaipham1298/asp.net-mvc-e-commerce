@@ -1,0 +1,26 @@
+﻿1:add package
+Microsoft.AspNetCore.Identity.EntityFrameworkCore: authentication
+Microsoft.AspNetCore.Identity.UI: authentication
+Microsoft.EntityFrameWorkCore: hỗ trợ truy vấn SQL (ORM)
+Microsoft.EntityFrameWorkCore.Tools: hỗ trợ truy vấn SQL (ORM)
+Pomelo.EntityFrameworkCore.MySql: hỗ trợ MySQL
+Microsoft.VisualStudio.Web.CodeGeneration.Design: Thêm mẫu có sẵn
+
+2: Liên kết DB
+-Tạo 1 file ApplicationDbContext: để sử dụng entity
+-Thêm file ApplicationDbContext vào program.cs
+-Sửa chuỗi kết nối cơ sở dữ liệu trong file appsetting.json
+
+
+3: Tạo Models
+-Tạo models
+-Thêm models vào ApplicationContext
+
+4: Tạo Migrations bằng lệnh: dotnet ef migrations add init
+-dotnet ef database update: chạy file migrations
+--> đã kết nối đc với database
+
+5: Tạo AreaAdmin: giống với mẫu MVC
+ 
+6: tạo trang admin:
+-Tạo layout cho trang admin: [Route("admin/about")]
