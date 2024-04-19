@@ -8,7 +8,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Evara Dashboard</title>
+    <title>@ViewData["title"] - Quản trị</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,6 +20,20 @@
     <link rel="shortcut icon" type="image/x-icon" href="/admin_assets/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link href="/admin_assets/css/main.css" rel="stylesheet" type="text/css" />
+
+    @RenderSection("Styles", false)
+
+    <style>
+        .table td {
+            vertical-align: middle;
+        }
+
+        .ql-editor {
+            height: 250px;
+            max-height: 250px;
+            overflow: auto;
+        }
+    </style>
 </head>
 
 <body>
@@ -28,7 +42,7 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a asp-controller="Home" asp-action="Index" class="brand-wrap">
-                <img src="admin_assets/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
+                <img src="/admin_assets/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -42,13 +56,13 @@
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
-                <li class="menu-item has-submenu @(currentController == "Product" || currentController == "ProductCateogry" ? "active" : "")">
+                <li class="menu-item has-submenu @(currentController == "Product" || currentController == "ProductCategory" ? "active" : "")">
                     <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Sản phẩm</span>
                     </a>
                     <div class="submenu">
                         <a asp-controller="Product" asp-action="Index" class="@(currentController == "Product" ? "active" : "")">Danh sách sản phẩm</a>
-                        <a asp-controller="ProductCateogry" asp-action="Index" class="@(currentController == "ProductCateogry" ? "active" : "")">Danh mục sản phẩm</a>
+                        <a asp-controller="ProductCategory" asp-action="Index" class="@(currentController == "ProductCategory" ? "active" : "")">Danh mục sản phẩm</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">

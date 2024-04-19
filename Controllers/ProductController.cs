@@ -8,5 +8,11 @@ namespace WebEcommerce.Controllers
         {
             return View();
         }
+
+        [Route("/product/{slug}")]
+        public IActionResult Detail(string slug)
+        {
+            return View();
+        }
     }
 }

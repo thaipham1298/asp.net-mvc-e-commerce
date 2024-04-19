@@ -14,16 +14,31 @@ namespace WebEcommerce.Models
         public string? Content { get; set; }
         public string? Image {  get; set; }
         public decimal Price { get; set; } = 0;
-        public decimal Promotion { get; set; } = 0;
+        public decimal CompareAtPrice { get; set; } = 0;
         public bool Status { get; set; } = true;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set;}
+        public bool IsFeatured { get; set; }
+        public bool IsHot { get; set; }
+        public int SoldCount { get; set; } = 0;
+        public int Stock { get; set; }
         public List<ProductCategory> Categories { get; set; } = [];
         public string GetPrice() {
             return string.Format("{0:N0} ₫", Price);
         }
 
-
+        public string GetCompareAtPrice()
+        {
+            return string.Format("{0:N0} ₫", CompareAtPrice);
+        }
+        public string GetDiscountPercent()
+        {
+            if(CompareAtPrice == 0)
+            {
+                return "";
+            }
+            return (CompareAtPrice - Price)/CompareAtPrice*100 +"%" ;
+        }
 
     }
 }

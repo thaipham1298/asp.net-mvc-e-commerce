@@ -1,0 +1,51 @@
+﻿@model ProductCategory
+@{
+    ProductCategory? productCategory = ViewData["Data"] as ProductCategory;
+}
+<form method="post" asp-action="@(productCategory !=null ? "Update" : "Store")" enctype="multipart/form-data" class="row">
+    <input type="hidden" asp-for="Id" value="@productCategory?.Id" />
+    <div class="col-9">
+        <div class="content-header">
+            <h2 class="content-title">@(productCategory != null ? "Sửa" : "Thêm")</h2>
+            <div>
+                <button type="submit" class="btn btn-md rounded font-sm hover-up">Tạo</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Basic</h4>
+            </div>
+            <div class="card-body">
+                <div>
+                    <div class="mb-4">
+                        <label for="product_name" class="form-label">Tên</label>
+                        <input required type="text" asp-for="Name" value="@productCategory?.Name" placeholder="Type here" class="form-control">
+                    </div>
+                    <div class="mb-4">
+                        <label for="product_name" class="form-label">Slug</label>
+                        <input type="text" asp-for="Slug" value="@productCategory?.Slug" placeholder="Type here" class="form-control">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Mô tả</label>
+                        <textarea placeholder="Type here" name="Description" class="form-control" rows="4">@productCategory?.Description</textarea>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- card end// -->
+    </div>
+    <div class="col-lg-3">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Media</h4>
+            </div>
+            <div class="card-body">
+                <div class="input-upload">
+                    <img src="/admin_assets/imgs/theme/upload.svg" alt="">
+                    <input class="form-control" name="file" type="file">
+                </div>
+            </div>
+        </div> <!-- card end// -->
+    </div>
+</form>

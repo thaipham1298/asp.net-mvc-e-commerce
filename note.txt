@@ -24,3 +24,6 @@ Microsoft.VisualStudio.Web.CodeGeneration.Design: Thêm mẫu có sẵn
  
 6: tạo trang admin:
 -Tạo layout cho trang admin: [Route("admin/about")]
+
+**
+- tạo 

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WebEcommerce.Areas.Admin.Services;
 using WebEcommerce.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("Default");
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
+
+// add scoped
+builder.Services.AddScoped<IUploadFile, UploadFile>();
+
+// disable logging
+builder.Logging.ClearProviders();
 
 var app = builder.Build();
 

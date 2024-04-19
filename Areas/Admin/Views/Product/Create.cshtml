@@ -1,15 +1,16 @@
 ﻿@model Product
 @{
     Product? product = ViewData["data"] as Product;
+    List<ProductCategory> categories = ViewData["categories"] as List<ProductCategory> ?? [];
 }
-<form method="post" asp-action="@(product !=null ? "Update" : "Store")" class="row">
+<form method="post" enctype="multipart/form-data" asp-action="@(product !=null ? "Update" : "Store")" class="row">
     <input type="hidden" asp-for="Id" value="@product?.Id" />
     <div class="col-9">
         <div class="content-header">
             <h2 class="content-title">@(product != null ? "Sửa sản phẩm" : "Thêm sản phẩm mới")</h2>
             <div>
                 <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                <button type="submit" class="btn btn-md rounded font-sm hover-up">Publich</button>
+                <button type="submit" class="btn btn-md rounded font-sm hover-up">Lưu</button>
             </div>
         </div>
     </div>
@@ -21,21 +22,28 @@
             <div class="card-body">
                 <div>
                     <div class="mb-4">
-                        <label for="product_name" class="form-label">Tên sản phẩm</label>
+                        <label for="product_name" class="form-label">Tên</label>
                         <input required type="text" asp-for="Name" value="@product?.Name"  placeholder="Type here" class="form-control" >
                     </div>
                     <div class="mb-4">
                         <label for="product_name" class="form-label">Slug</label>
-                        <input required type="text" asp-for="Slug" value="@product?.Slug" placeholder="Type here" class="form-control">
+                        <input type="text" asp-for="Slug" value="@product?.Slug" placeholder="Type here" class="form-control">
                     </div>
                     <div class="mb-4">
                         <label class="form-label">Mô tả</label>
                         <textarea placeholder="Type here" name="Description" class="form-control" rows="4">@product?.Description</textarea>
                     </div>
+                    <div class="mb-4">
+                        <label class="form-label">Nội dung</label>
+                        <input type="hidden" asp-for="Content" value="@product?.Content">
+                        <div id="editor">
+                            @Html.Raw(product?.Content)
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="mb-4">
-                                <label class="form-label">Giá</label>
+                                <label class="form-label">Giá bán</label>
                                 <div class="row gx-2">
                                     <input required type="text" value="@product?.Price.ToString("N0")" asp-for="Price" class="form-control">
                                 </div>
@@ -43,8 +51,40 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-4">
-                                <label class="form-label">Giá khuyến mại</label>
-                                <input type="text" value="@product?.Promotion.ToString("N0")" asp-for="Promotion" class="form-control">
+                                <label class="form-label">Giá gốc</label>
+                                <input type="text" value="@product?.CompareAtPrice.ToString("N0")" asp-for="CompareAtPrice" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <label class="form-check mb-4">
+                                        @if (product != null && product.IsHot)
+                                        {
+                                            <input asp-for="IsHot" class="form-check-input" type="checkbox" value="true" checked />
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="IsHot" class="form-check-input" type="checkbox" value="true" />
+                                        }
+                                        <span class="form-check-label"> Sản phẩm hot </span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <label class="form-check mb-4">
+                                        @if (product != null && product.IsFeatured)
+                                        {
+                                            <input asp-for="IsFeatured" class="form-check-input" type="checkbox" value="true" checked />
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="IsFeatured" class="form-check-input" type="checkbox" value="true">
+                                        }
+                                        <span class="form-check-label"> Sản phẩm nổi bật </span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -59,8 +99,8 @@
             </div>
             <div class="card-body">
                 <div class="input-upload">
-                    <img src="/admin_assets/imgs/theme/upload.svg" alt="">
-                    <input class="form-control" type="file">
+                    <img src="@(product != null && !string.IsNullOrEmpty(product.Image) ? product.Image : "/admin_assets/imgs/theme/upload.svg")" alt="">
+                    <input class="form-control" name="file" type="file">
                 </div>
             </div>
         </div> <!-- card end// -->
@@ -70,24 +110,20 @@
             </div>
             <div class="card-body">
                 <div class="row gx-2">
-                    <div class="col-sm-6 mb-3">
-                        <label class="form-label">Category</label>
-                        <select class="form-select">
-                            <option> Automobiles </option>
-                            <option> Home items </option>
-                            <option> Electronics </option>
-                            <option> Smartphones </option>
-                            <option> Sport items </option>
-                            <option> Baby and Tous </option>
-                        </select>
-                    </div>
-                    <div class="col-sm-6 mb-3">
-                        <label class="form-label">Sub-category</label>
-                        <select class="form-select">
-                            <option> Nissan </option>
-                            <option> Honda </option>
-                            <option> Mercedes </option>
-                            <option> Chevrolet </option>
+                    <div class="col-sm-12 mb-3">
+                        <label class="form-label">Danh mục</label>
+                        <select class="form-select select-nice" multiple name="Categories[]">
+                            @foreach (var v in categories)
+                            {
+                                if (product != null && product.Categories.Any(c => c.Id == v.Id))
+                                {
+                                    <option value="@v.Id" selected>@v.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@v.Id">@v.Name</option>
+                                }
+                            }
                         </select>
                     </div>
                     <div class="mb-4">
@@ -97,5 +133,52 @@
                 </div> <!-- row.// -->
             </div>
         </div> <!-- card end// -->
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Trạng thái</h4>
+            </div>
+            <div class="card-body">
+                <div class="row gx-2">
+                    <div class="col-sm-6 mb-3">
+                        <label class="form-label">Ngày tạo</label>
+                        <input class="form-control" type="datetime-local" asp-for="CreatedAt" value="@product?.CreatedAt.ToString("yyyy-MM-ddTHH:mm")">
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <label class="form-label">Ngày cập nhập</label>
+                        <input class="form-control" type="datetime-local" asp-for="UpdatedAt" value="@product?.UpdatedAt.ToString("yyyy-MM-ddTHH:mm")">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-select" asp-for="Status">
+                            <!option value="true" @(product == null ? "selected" : product.Status ? "selected" : "")> Xuất bản </!option>
+                            <!option value="false"  @(product != null && !product.Status ? "selected" : "")> Nháp </!option>
+                        </select>
+                    </div>
+                </div> <!-- row.// -->
+            </div>
+        </div> <!-- card end// -->
     </div>
 </form>
+
+@section Styles {
+    <link href="/admin_assets/css/vendors/quill.snow.css" rel="stylesheet" type="text/css" />
+}
+
+@section Scripts {
+    <script src="/admin_assets/js/vendors/quill.js"></script>
+
+    <script>
+        const quill = new Quill("#editor", {
+            theme: "snow"
+        });
+
+        let contentEl = document.getElementById("Content")
+
+        quill.on("selection-change", (range) => {
+            if (!range && contentEl) {
+                contentEl.value = quill.root.innerHTML
+            }
+        });
+    </script>
+}

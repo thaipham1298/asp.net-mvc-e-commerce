@@ -15,12 +15,20 @@ namespace WebEcommerce.Services
 
             foreach (var entry in entries)
             {
+                List<string> properties = entry.Metadata.GetProperties().Select(v => v.Name).ToList();
+
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
+                    if (properties.Contains("CreatedAt"))
+                    {
+                        entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
+                    }
                 }
 
-                entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+                if (properties.Contains("UpdatedAt"))
+                {
+                    entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+                }
             }
 
             return base.SaveChanges();
